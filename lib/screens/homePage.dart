@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -16,7 +17,11 @@ class _HomePageState extends State<HomePage> {
         title: Text("HomePage"),
       ),
       body: RaisedButton(
-        onPressed: () {},
+        onPressed: () {
+          DatabaseReference dbref =
+              FirebaseDatabase.instance.reference().child("Driver App");
+          dbref.set("isConnected");
+        },
         child: "Hello".text.make(),
       ),
     );
