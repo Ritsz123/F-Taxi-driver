@@ -69,13 +69,16 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
 //      verify user data in db
       DatabaseReference userRef =
-          FirebaseDatabase.instance.reference().child('users/${user.uid}');
+          FirebaseDatabase.instance.reference().child('drivers/${user.uid}');
       userRef.once().then(
         (DataSnapshot snapshot) {
           if (snapshot != null) {
-            print("User Logged in");
+            print("Driver Logged in");
             Navigator.pushNamedAndRemoveUntil(
-                context, HomeScreen.id, (route) => false);
+              context,
+              HomeScreen.id,
+              (route) => false,
+            );
           }
         },
       );

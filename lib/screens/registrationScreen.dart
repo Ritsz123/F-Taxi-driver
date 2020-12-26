@@ -99,7 +99,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              70.heightBox,
+              50.heightBox,
               Image(
                 alignment: Alignment.center,
                 height: 100,
