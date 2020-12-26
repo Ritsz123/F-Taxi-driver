@@ -1,11 +1,10 @@
-import 'dart:async';
 import 'dart:io' show Platform;
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:uber_driver_app/screens/homeScreen.dart';
 import 'package:uber_driver_app/screens/loginScreen.dart';
 import 'package:uber_driver_app/screens/registrationScreen.dart';
+import 'package:uber_driver_app/screens/vehicleInfoScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +46,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => HomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
+        VehicleInfoScreen.id: (context) => VehicleInfoScreen(),
       },
     );
   }

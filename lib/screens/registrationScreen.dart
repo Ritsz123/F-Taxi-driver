@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:uber_driver_app/Colors.dart';
+import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/screens/homeScreen.dart';
 import 'package:uber_driver_app/screens/loginScreen.dart';
+import 'package:uber_driver_app/screens/VehicleInfoScreen.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -75,9 +77,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         'phone': phoneController.text,
       };
       await newUserRef.set(userMap);
-//        take user to homepage
-      Navigator.pushNamedAndRemoveUntil(
-          context, HomeScreen.id, (route) => false);
+      currentFirebaseUser = user;
+//        take user to nextpage
+      Navigator.pushNamed(context, VehicleInfoScreen.id);
     }
   }
 
