@@ -3,13 +3,16 @@ import 'dart:io' show Platform;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:uber_driver_app/screens/homePage.dart';
+import 'package:uber_driver_app/screens/homeScreen.dart';
+import 'package:uber_driver_app/screens/loginScreen.dart';
+import 'package:uber_driver_app/screens/registrationScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     final FirebaseApp app = await Firebase.initializeApp(
       name: 'db2',
+      //TODO:Configure IOS app
       options: Platform.isIOS || Platform.isMacOS
 //    for ios
           ? FirebaseOptions(
@@ -39,9 +42,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: HomePage.id,
+      initialRoute: RegistrationScreen.id,
       routes: {
-        HomePage.id: (context) => HomePage(),
+        HomeScreen.id: (context) => HomeScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
+        RegistrationScreen.id: (context) => RegistrationScreen(),
       },
     );
   }
