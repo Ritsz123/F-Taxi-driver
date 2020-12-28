@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/screens/homeScreen.dart';
 import 'package:uber_driver_app/screens/loginScreen.dart';
 import 'package:uber_driver_app/screens/registrationScreen.dart';
@@ -30,6 +32,7 @@ void main() async {
               databaseURL: 'https://uber-clone-ba3b4.firebaseio.com',
             ),
     );
+    currentFirebaseUser = FirebaseAuth.instance.currentUser;
   } catch (ex) {
     print(ex.toString());
   }
@@ -46,7 +49,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: RegistrationScreen.id,
+      initialRoute:
+          currentFirebaseUser == null ? LoginScreen.id : HomeScreen.id,
       routes: {
         HomeScreen.id: (context) => HomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
