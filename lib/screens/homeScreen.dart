@@ -1,5 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/tabs/earningsTab.dart';
 import 'package:uber_driver_app/tabs/homeTab.dart';
@@ -18,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   TabController tabController;
   int _selectedIndex = 0;
+  Position currentPosition;
 
   void onItemClicked(int index) {
     setState(() {
