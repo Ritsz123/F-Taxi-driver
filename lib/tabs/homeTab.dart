@@ -44,7 +44,8 @@ class _HomeTabState extends State<HomeTab> {
       }
     }
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
+      desiredAccuracy: LocationAccuracy.bestForNavigation,
+    );
     currentPosition = position;
     LatLng pos = LatLng(position.latitude, position.longitude);
     _mapController.animateCamera(CameraUpdate.newLatLng(pos));
@@ -63,6 +64,23 @@ class _HomeTabState extends State<HomeTab> {
     tripRequestRef.set('waiting');
     tripRequestRef.onValue.listen((event) {
       print(event.snapshot.value);
+    });
+  }
+
+  void getLocationUpdates() {
+    homeTabPositionStream = Geolocator.getPositionStream(
+      distanceFilter: 4,
+      desiredAccuracy: LocationAccuracy.bestForNavigation,
+    ).listen((Position position) {
+      currentPosition = position;
+      Geofire.setLocation(
+        currentFirebaseUser.uid,
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+      LatLng pos =
+          new LatLng(currentPosition.latitude, currentPosition.longitude);
+      _mapController.animateCamera(CameraUpdate.newLatLng(pos));
     });
   }
 
@@ -97,6 +115,7 @@ class _HomeTabState extends State<HomeTab> {
             color: Color(0xff159f15),
             onPressed: () {
               goOnline();
+              getLocationUpdates();
             },
           ),
         ),
