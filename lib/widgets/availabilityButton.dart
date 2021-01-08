@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class TaxiButton extends StatelessWidget {
+class AvailabilityButton extends StatelessWidget {
   final String buttonText;
   final Function onPressed;
   final Color color;
-  final double textSize;
 
-  TaxiButton(
-      {@required this.onPressed,
-      @required this.buttonText,
-      this.color,
-      this.textSize});
+  AvailabilityButton(
+      {@required this.onPressed, @required this.buttonText, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +19,15 @@ class TaxiButton extends StatelessWidget {
       ),
       color: color == null ? MyColors.colorGreen : color,
       textColor: Colors.white,
-      child: buttonText.text
-          .size(textSize == null ? 18 : textSize)
-          .uppercase
-          .fontFamily('Brand-Bold')
-          .makeCentered()
-          .box
-          .height(50)
-          .make(),
+      child: Container(
+        height: 50,
+        width: 150,
+        child: buttonText.text
+            .size(18)
+            .uppercase
+            .fontFamily('Brand-Bold')
+            .makeCentered(),
+      ),
     );
   }
 }

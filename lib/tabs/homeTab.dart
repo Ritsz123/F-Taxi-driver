@@ -1,9 +1,14 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/globals.dart';
+import 'package:uber_driver_app/widgets/availabilityButton.dart';
+import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class HomeTab extends StatefulWidget {
@@ -15,6 +20,8 @@ class _HomeTabState extends State<HomeTab> {
   GoogleMapController _mapController;
   Completer<GoogleMapController> _controller = Completer();
   Position currentPosition;
+  String availableDriversPathInDB = "driversAvailable";
+  DatabaseReference tripRequestRef;
 
   void getCurrentLocation() async {
     bool serviceEnabled;
@@ -43,11 +50,28 @@ class _HomeTabState extends State<HomeTab> {
     _mapController.animateCamera(CameraUpdate.newLatLng(pos));
   }
 
+  void goOnline() {
+    Geofire.initialize(availableDriversPathInDB);
+    Geofire.setLocation(
+      currentFirebaseUser.uid,
+      currentPosition.latitude,
+      currentPosition.longitude,
+    );
+    tripRequestRef = FirebaseDatabase.instance
+        .reference()
+        .child('drivers/${currentFirebaseUser.uid}/newtrip');
+    tripRequestRef.set('waiting');
+    tripRequestRef.onValue.listen((event) {
+      print(event.snapshot.value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         GoogleMap(
+          padding: EdgeInsets.only(top: 135),
           myLocationEnabled: true,
           myLocationButtonEnabled: true,
           mapType: MapType.terrain,
@@ -57,6 +81,24 @@ class _HomeTabState extends State<HomeTab> {
             getCurrentLocation();
           },
           initialCameraPosition: googlePlex,
+        ),
+        Container(
+          height: 135,
+          width: double.infinity,
+          color: MyColors.colorPrimary,
+        ),
+        Positioned(
+          top: 60,
+          right: context.screenWidth / 4,
+          left: context.screenWidth / 4,
+          child: TaxiButton(
+            textSize: 20,
+            buttonText: "Go online",
+            color: Color(0xff159f15),
+            onPressed: () {
+              goOnline();
+            },
+          ),
         ),
       ],
     );
