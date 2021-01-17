@@ -23,4 +23,7 @@ class MyColors {
   static const Color colorLightGray = Color(0xFFe2e2e2);
   static const Color colorLightGrayFair = Color(0xFFe1e5e8);
   static const Color colorDimText = Color(0xFFadadad);
+
+  static const Color colorRed = Colors.red;
+  static const Color colorLightGreen = Color(0xff159f15);
 }

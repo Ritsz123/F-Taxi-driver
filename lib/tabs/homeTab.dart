@@ -23,6 +23,13 @@ class _HomeTabState extends State<HomeTab> {
   Position currentPosition;
   String availableDriversPathInDB = "driversAvailable";
   DatabaseReference tripRequestRef;
+  bool isOnline = false;
+  String availabilityText = "GO Online";
+  Color availabilityColor = MyColors.colorLightGreen;
+  String goOnlineDesc =
+      "Are you sure you want to go Online and start receiving trip requests ?";
+  String goOfflineDesc =
+      "Are you sure you want to go Offline and stop receiving all trip requests ?";
 
   void getCurrentLocation() async {
     bool serviceEnabled;
@@ -68,17 +75,26 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
+  void goOffline() {
+    Geofire.removeLocation(currentFirebaseUser.uid);
+    tripRequestRef.onDisconnect();
+    tripRequestRef.remove();
+    tripRequestRef = null;
+  }
+
   void getLocationUpdates() {
     homeTabPositionStream = Geolocator.getPositionStream(
       distanceFilter: 4,
       desiredAccuracy: LocationAccuracy.bestForNavigation,
     ).listen((Position position) {
       currentPosition = position;
-      Geofire.setLocation(
-        currentFirebaseUser.uid,
-        currentPosition.latitude,
-        currentPosition.longitude,
-      );
+      if (isOnline) {
+        Geofire.setLocation(
+          currentFirebaseUser.uid,
+          currentPosition.latitude,
+          currentPosition.longitude,
+        );
+      }
       LatLng pos =
           new LatLng(currentPosition.latitude, currentPosition.longitude);
       _mapController.animateCamera(CameraUpdate.newLatLng(pos));
@@ -112,16 +128,40 @@ class _HomeTabState extends State<HomeTab> {
           left: context.screenWidth / 4,
           child: TaxiButton(
             textSize: 20,
-            buttonText: "Go online",
-            color: Color(0xff159f15),
+            buttonText: availabilityText,
+            color: availabilityColor,
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (context) => ConfirmSheet(),
+                builder: (context) => ConfirmSheet(
+                  isOnline: isOnline,
+                  title: isOnline ? "Go offline" : "go online",
+                  subTitle: isOnline ? goOfflineDesc : goOnlineDesc,
+                  onPressed: () {
+                    if (isOnline) {
+                      //go offline
+                      goOffline();
+                      setState(() {
+                        isOnline = false;
+                        availabilityColor = MyColors.colorLightGreen;
+                        availabilityText = "GO online";
+                      });
+                    } else {
+                      //go online
+                      goOnline();
+                      getLocationUpdates();
+                      setState(() {
+                        isOnline = true;
+                        availabilityColor = MyColors.colorRed;
+                        availabilityText = "GO offline";
+                      });
+                    }
+                    //remove confirmation sheet
+                    Navigator.pop(context);
+                  },
+                ),
                 isDismissible: false,
               );
-//              goOnline();
-//              getLocationUpdates();
             },
           ),
         ),

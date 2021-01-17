@@ -5,6 +5,14 @@ import 'package:uber_driver_app/widgets/taxiOutlineButton.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class ConfirmSheet extends StatelessWidget {
+  final String title;
+  final String subTitle;
+  final Function onPressed;
+  final bool isOnline;
+
+  ConfirmSheet(
+      {this.isOnline, @required this.title, this.onPressed, this.subTitle});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,19 +32,13 @@ class ConfirmSheet extends StatelessWidget {
       child: Column(
         children: [
           10.heightBox,
-          "Go Online"
-              .text
-              .uppercase
+          title.text.uppercase
               .size(22)
               .fontFamily("Brand-Bold")
               .color(MyColors.colorText)
               .makeCentered(),
           20.heightBox,
-          "Are you sure you want to go Online and start receiving trip requests ?"
-              .text
-              .size(16)
-              .color(MyColors.colorTextLight)
-              .makeCentered(),
+          subTitle.text.size(16).color(MyColors.colorTextLight).makeCentered(),
           20.heightBox,
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +58,8 @@ class ConfirmSheet extends StatelessWidget {
               Expanded(
                 child: Container(
                   child: TaxiButton(
-                    onPressed: () {},
+                    color: isOnline ? MyColors.colorRed : MyColors.colorGreen,
+                    onPressed: onPressed,
                     buttonText: "CONFIRM",
                   ),
                 ),
