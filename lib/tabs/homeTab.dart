@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/widgets/availabilityButton.dart';
+import 'package:uber_driver_app/widgets/confirmSheet.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -114,8 +115,13 @@ class _HomeTabState extends State<HomeTab> {
             buttonText: "Go online",
             color: Color(0xff159f15),
             onPressed: () {
-              goOnline();
-              getLocationUpdates();
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => ConfirmSheet(),
+                isDismissible: false,
+              );
+//              goOnline();
+//              getLocationUpdates();
             },
           ),
         ),
