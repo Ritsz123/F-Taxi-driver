@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
@@ -7,10 +8,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/globals.dart';
+import 'package:uber_driver_app/helper/PushNotificationService.dart';
 import 'package:uber_driver_app/widgets/availabilityButton.dart';
 import 'package:uber_driver_app/widgets/confirmSheet.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
+
+import '../globals.dart';
 
 class HomeTab extends StatefulWidget {
   @override
@@ -26,10 +30,21 @@ class _HomeTabState extends State<HomeTab> {
   bool isOnline = false;
   String availabilityText = "GO Online";
   Color availabilityColor = MyColors.colorLightGreen;
-  String goOnlineDesc =
-      "Are you sure you want to go Online and start receiving trip requests ?";
-  String goOfflineDesc =
-      "Are you sure you want to go Offline and stop receiving all trip requests ?";
+  String goOnlineDesc = "Are you sure you want to go Online and start receiving trip requests ?";
+  String goOfflineDesc = "Are you sure you want to go Offline and stop receiving all trip requests ?";
+
+  void getCurrentDriverInfo() {
+    currentFirebaseUser = FirebaseAuth.instance.currentUser;
+    PushNotificationService notificationService = PushNotificationService();
+    notificationService.initialize();
+    notificationService.getToken();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentDriverInfo();
+  }
 
   void getCurrentLocation() async {
     bool serviceEnabled;
@@ -45,8 +60,7 @@ class _HomeTabState extends State<HomeTab> {
     }
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
         print("denied");
         return;
       }
@@ -66,9 +80,7 @@ class _HomeTabState extends State<HomeTab> {
       currentPosition.latitude,
       currentPosition.longitude,
     );
-    tripRequestRef = FirebaseDatabase.instance
-        .reference()
-        .child('drivers/${currentFirebaseUser.uid}/newtrip');
+    tripRequestRef = FirebaseDatabase.instance.reference().child('drivers/${currentFirebaseUser.uid}/newtrip');
     tripRequestRef.set('waiting');
     tripRequestRef.onValue.listen((event) {
       print(event.snapshot.value);
@@ -95,8 +107,7 @@ class _HomeTabState extends State<HomeTab> {
           currentPosition.longitude,
         );
       }
-      LatLng pos =
-          new LatLng(currentPosition.latitude, currentPosition.longitude);
+      LatLng pos = new LatLng(currentPosition.latitude, currentPosition.longitude);
       _mapController.animateCamera(CameraUpdate.newLatLng(pos));
     });
   }
