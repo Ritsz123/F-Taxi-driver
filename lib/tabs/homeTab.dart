@@ -9,7 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/helper/PushNotificationService.dart';
-import 'package:uber_driver_app/widgets/availabilityButton.dart';
 import 'package:uber_driver_app/widgets/confirmSheet.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -22,11 +21,11 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  GoogleMapController _mapController;
+  late GoogleMapController _mapController;
   Completer<GoogleMapController> _controller = Completer();
-  Position currentPosition;
+  Position? currentPosition;
   String availableDriversPathInDB = "driversAvailable";
-  DatabaseReference tripRequestRef;
+  DatabaseReference? tripRequestRef;
   bool isOnline = false;
   String availabilityText = "GO Online";
   Color availabilityColor = MyColors.colorLightGreen;
@@ -71,26 +70,33 @@ class _HomeTabState extends State<HomeTab> {
     currentPosition = position;
     LatLng pos = LatLng(position.latitude, position.longitude);
     _mapController.animateCamera(CameraUpdate.newLatLng(pos));
+    CameraPosition cp = CameraPosition(
+      target: pos,
+      zoom: 16,
+    );
+    _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(cp),
+    );
   }
 
   void goOnline() {
     Geofire.initialize(availableDriversPathInDB);
     Geofire.setLocation(
-      currentFirebaseUser.uid,
-      currentPosition.latitude,
-      currentPosition.longitude,
+      currentFirebaseUser!.uid,
+      currentPosition!.latitude,
+      currentPosition!.longitude,
     );
-    tripRequestRef = FirebaseDatabase.instance.reference().child('drivers/${currentFirebaseUser.uid}/newtrip');
-    tripRequestRef.set('waiting');
-    tripRequestRef.onValue.listen((event) {
+    tripRequestRef = FirebaseDatabase.instance.reference().child('drivers/${currentFirebaseUser!.uid}/newtrip');
+    tripRequestRef!.set('waiting');
+    tripRequestRef!.onValue.listen((event) {
       print(event.snapshot.value);
     });
   }
 
   void goOffline() {
-    Geofire.removeLocation(currentFirebaseUser.uid);
-    tripRequestRef.onDisconnect();
-    tripRequestRef.remove();
+    Geofire.removeLocation(currentFirebaseUser!.uid);
+    tripRequestRef!.onDisconnect();
+    tripRequestRef!.remove();
     tripRequestRef = null;
   }
 
@@ -102,12 +108,12 @@ class _HomeTabState extends State<HomeTab> {
       currentPosition = position;
       if (isOnline) {
         Geofire.setLocation(
-          currentFirebaseUser.uid,
-          currentPosition.latitude,
-          currentPosition.longitude,
+          currentFirebaseUser!.uid,
+          currentPosition!.latitude,
+          currentPosition!.longitude,
         );
       }
-      LatLng pos = new LatLng(currentPosition.latitude, currentPosition.longitude);
+      LatLng pos = new LatLng(currentPosition!.latitude, currentPosition!.longitude);
       _mapController.animateCamera(CameraUpdate.newLatLng(pos));
     });
   }
@@ -122,7 +128,7 @@ class _HomeTabState extends State<HomeTab> {
           myLocationButtonEnabled: true,
           mapType: MapType.terrain,
           onMapCreated: (GoogleMapController controller) {
-            _controller.complete();
+            _controller.complete(controller);
             _mapController = controller;
             getCurrentLocation();
           },

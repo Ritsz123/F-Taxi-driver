@@ -5,15 +5,15 @@ import 'package:velocity_x/velocity_x.dart';
 class AvailabilityButton extends StatelessWidget {
   final String buttonText;
   final Function onPressed;
-  final Color color;
+  final Color? color;
 
   AvailabilityButton(
-      {@required this.onPressed, @required this.buttonText, this.color});
+      {required this.onPressed, required this.buttonText, this.color});
 
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      onPressed: onPressed,
+      onPressed: onPressed as void Function()?,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25),
       ),

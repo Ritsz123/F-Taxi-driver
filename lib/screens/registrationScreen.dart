@@ -3,9 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/globals.dart';
-import 'package:uber_driver_app/screens/homeScreen.dart';
 import 'package:uber_driver_app/screens/loginScreen.dart';
-import 'package:uber_driver_app/screens/VehicleInfoScreen.dart';
+import 'package:uber_driver_app/screens/vehicleInfoScreen.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -54,7 +53,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void registerUser() async {
-    User user;
+    User? user;
     try {
       user = (await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
@@ -63,7 +62,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           .user;
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      showSnackBar(e.message);
+      showSnackBar(e.message!);
     }
 
     if (user != null) {
@@ -88,7 +87,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       elevation: 10,
       content: title.text.size(15).make(),
     );
-    scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -194,7 +193,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ],
               ).p20(),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                       context, LoginScreen.id, (route) => false);

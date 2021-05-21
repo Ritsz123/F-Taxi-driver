@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-User currentFirebaseUser;
+User? currentFirebaseUser;
 
 final CameraPosition googlePlex = CameraPosition(
   bearing: 192.8334901395799,
@@ -13,4 +13,4 @@ final CameraPosition googlePlex = CameraPosition(
   zoom: 19.151926040649414,
 );
 
-StreamSubscription<Position> homeTabPositionStream;
+StreamSubscription<Position>? homeTabPositionStream;

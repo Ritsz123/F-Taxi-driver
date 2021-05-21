@@ -1,13 +1,10 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/tabs/earningsTab.dart';
 import 'package:uber_driver_app/tabs/homeTab.dart';
 import 'package:uber_driver_app/tabs/profileTab.dart';
 import 'package:uber_driver_app/tabs/ratingsTab.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 class HomeScreen extends StatefulWidget {
   static const id = "homePage";
@@ -16,11 +13,10 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  TabController tabController;
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late TabController tabController;
   int _selectedIndex = 0;
-  Position currentPosition;
+  Position? currentPosition;
 
   void onItemClicked(int index) {
     setState(() {

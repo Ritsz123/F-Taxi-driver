@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
       elevation: 10,
       content: title.text.size(15).make(),
     );
-    scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void validateLogin() async {
@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginUser() async {
-    User user;
+    User? user;
     try {
       user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
           .user;
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      showSnackBar(e.message);
+      showSnackBar(e.message!);
     }
     if (user != null) {
 //      verify user data in db
@@ -72,14 +72,12 @@ class _LoginScreenState extends State<LoginScreen> {
           FirebaseDatabase.instance.reference().child('drivers/${user.uid}');
       userRef.once().then(
         (DataSnapshot snapshot) {
-          if (snapshot != null) {
-            print("Driver Logged in");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              HomeScreen.id,
-              (route) => false,
-            );
-          }
+          print("Driver Logged in");
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            HomeScreen.id,
+            (route) => false,
+          );
         },
       );
     }
@@ -152,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ).p20(),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                       context, RegistrationScreen.id, (route) => false);
