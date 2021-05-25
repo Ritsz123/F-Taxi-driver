@@ -6,12 +6,12 @@ import 'package:velocity_x/velocity_x.dart';
 
 class ConfirmSheet extends StatelessWidget {
   final String title;
-  final String subTitle;
-  final Function onPressed;
-  final bool isOnline;
+  final String? subTitle;
+  final Function? onPressed;
+  final bool? isOnline;
 
   ConfirmSheet(
-      {this.isOnline, @required this.title, this.onPressed, this.subTitle});
+      {this.isOnline, required this.title, this.onPressed, this.subTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class ConfirmSheet extends StatelessWidget {
               .color(MyColors.colorText)
               .makeCentered(),
           20.heightBox,
-          subTitle.text.size(16).color(MyColors.colorTextLight).makeCentered(),
+          subTitle!.text.size(16).color(MyColors.colorTextLight).makeCentered(),
           20.heightBox,
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -58,7 +58,7 @@ class ConfirmSheet extends StatelessWidget {
               Expanded(
                 child: Container(
                   child: TaxiButton(
-                    color: isOnline ? MyColors.colorRed : MyColors.colorGreen,
+                    color: isOnline! ? MyColors.colorRed : MyColors.colorGreen,
                     onPressed: onPressed,
                     buttonText: "CONFIRM",
                   ),

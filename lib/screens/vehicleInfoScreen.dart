@@ -6,24 +6,17 @@ import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class VehicleInfoScreen extends StatefulWidget {
-  static const id = "vehicleInfoScreen";
+class VehicleInfoScreen extends StatelessWidget {
+  static final id = "vehicleInfoScreen";
 
-  @override
-  _VehicleInfoScreenState createState() => _VehicleInfoScreenState();
-}
-
-class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
-  var carModelController = TextEditingController();
-
-  var carColorController = TextEditingController();
-
-  var carRegistrationController = TextEditingController();
+  final TextEditingController carModelController = TextEditingController();
+  final TextEditingController carColorController = TextEditingController();
+  final TextEditingController carRegistrationController = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   void updateVehicleDetailsInDB(context) async {
     ProgressDialog(status: 'please wait..');
-    String id = currentFirebaseUser.uid;
+    String id = currentFirebaseUser!.uid;
     DatabaseReference driverRef = FirebaseDatabase.instance
         .reference()
         .child('drivers/$id/vehicle_details');
@@ -37,12 +30,12 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
   }
 
-  void showSnackBar(String title) {
+  void showSnackBar(BuildContext context, String title) {
     final snackBar = SnackBar(
       elevation: 10,
       content: title.text.size(15).make(),
     );
-    scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -111,15 +104,15 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                     TaxiButton(
                         onPressed: () {
                           if (carColorController.text.length < 3) {
-                            showSnackBar('please provide valid car color');
+                            showSnackBar(context, 'please provide valid car color');
                             return;
                           }
                           if (carModelController.text.length < 3) {
-                            showSnackBar('please provide valid car model');
+                            showSnackBar(context, 'please provide valid car model');
                             return;
                           }
                           if (carRegistrationController.text.length < 3) {
-                            showSnackBar(
+                            showSnackBar(context,
                                 'please provide valid car registration number');
                             return;
                           }

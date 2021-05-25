@@ -4,20 +4,20 @@ import 'package:velocity_x/velocity_x.dart';
 
 class TaxiButton extends StatelessWidget {
   final String buttonText;
-  final Function onPressed;
-  final Color color;
-  final double textSize;
+  final Function? onPressed;
+  final Color? color;
+  final double? textSize;
 
   TaxiButton(
-      {@required this.onPressed,
-      @required this.buttonText,
+      {required this.onPressed,
+      required this.buttonText,
       this.color,
       this.textSize});
 
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      onPressed: onPressed,
+      onPressed: onPressed as void Function()?,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25),
       ),
