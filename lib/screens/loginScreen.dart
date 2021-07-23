@@ -1,5 +1,4 @@
 import 'package:connectivity/connectivity.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uber_driver_app/Colors.dart';
 import 'package:uber_driver_app/globals.dart';

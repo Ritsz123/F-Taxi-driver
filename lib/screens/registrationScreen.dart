@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:uber_driver_app/Colors.dart';
-import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/screens/loginScreen.dart';
-import 'package:uber_driver_app/screens/vehicleInfoScreen.dart';
+import 'package:uber_driver_app/widgets/input_field.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -18,69 +15,13 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  var fullNameController = TextEditingController();
-  var phoneController = TextEditingController();
-  var emailController = TextEditingController();
-  var passwordController = TextEditingController();
+
+  String _name = '';
+  String _email = '';
+  String _password = '';
+  String _phone = '';
   bool isLoading = false;
-
-  void validateRegistration() async {
-//                        check network connection
-    var connResult = await Connectivity().checkConnectivity();
-    if (connResult != ConnectivityResult.mobile &&
-        connResult != ConnectivityResult.wifi) {
-      showSnackBar("No Internet connectivity");
-      return;
-    }
-    if (fullNameController.text.length < 5) {
-      showSnackBar("Please provide valid full name");
-    } else if (phoneController.text.length != 10) {
-      showSnackBar("Please provide valid phone number");
-    } else if (!emailController.text.contains('@')) {
-      showSnackBar("please provide valid email address");
-    } else if (passwordController.text.length < 6) {
-      showSnackBar("password length should be more than 6 characters");
-    } else {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => ProgressDialog(status: "Registering user...."),
-      );
-      registerUser();
-    }
-  }
-
-  void registerUser() async {
-    User? user;
-    try {
-      user = (await _auth.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      ))
-          .user;
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      showSnackBar(e.message!);
-    }
-
-    if (user != null) {
-      print('Driver Registration Successful');
-      DatabaseReference newUserRef =
-          FirebaseDatabase.instance.reference().child('drivers/${user.uid}');
-//        prepare data to be saved in database
-      Map userMap = {
-        'fullname': fullNameController.text,
-        'email': emailController.text,
-        'phone': phoneController.text,
-      };
-      await newUserRef.set(userMap);
-      currentFirebaseUser = user;
-//        take user to nextpage
-      Navigator.pushNamed(context, VehicleInfoScreen.id);
-    }
-  }
 
   void showSnackBar(String title) {
     final snackBar = SnackBar(
@@ -106,97 +47,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 image: AssetImage("assets/images/logo.png"),
               ),
               20.heightBox,
-              "Create a Driver's account"
-                  .text
-                  .size(25)
-                  .fontFamily('Brand-Bold')
-                  .make(),
+              "Create a Driver's account".text.size(25).fontFamily('Brand-Bold').make(),
               15.heightBox,
               Column(
                 children: [
-                  TextField(
-                    controller: fullNameController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      labelText: 'Full name',
-                      labelStyle: TextStyle(
-                        fontSize: 18,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  5.heightBox,
-                  TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email Address',
-                      labelStyle: TextStyle(
-                        fontSize: 18,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  5.heightBox,
-                  TextField(
-                    controller: phoneController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Phone number',
-                      labelStyle: TextStyle(
-                        fontSize: 18,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  5.heightBox,
-                  TextField(
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(
-                        fontSize: 18,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
+                  _registrationForm(),
                   30.heightBox,
                   TaxiButton(
-                    onPressed: validateRegistration,
+                    onPressed: registerUser,
                     buttonText: "Register",
                     color: MyColors.colorAccentPurple,
                   ),
                 ],
-              ).p20(),
+              ).p24(),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, LoginScreen.id, (route) => false);
+                  Navigator.pushNamedAndRemoveUntil(context, LoginScreen.id, (route) => false);
                 },
                 child: "Already have a account?, Login".text.size(15).make(),
               ),
@@ -205,5 +71,101 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
     );
+  }
+
+  Widget _registrationForm() {
+    return Column(
+      children: [
+        InputField(
+          labelText: 'Full name',
+          onValueChange: (e) {},
+        ),
+        5.heightBox,
+        InputField(
+          labelText: 'Email Address',
+          keyboardType: TextInputType.emailAddress,
+          onValueChange: (e) {},
+        ),
+        5.heightBox,
+        InputField(
+          labelText: 'Phone number',
+          keyboardType: TextInputType.number,
+          onValueChange: (v){},
+        ),
+        5.heightBox,
+        InputField(
+          labelText: 'Password',
+          obscureText: true,
+          onValueChange: (String value) {
+            // _password = value;
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<bool> validateRegistration() async {
+//   check network connection
+    var connResult = await Connectivity().checkConnectivity();
+    if (connResult != ConnectivityResult.mobile &&
+        connResult != ConnectivityResult.wifi) {
+      showSnackBar("No Internet connectivity");
+      return false;
+    }
+    if (_name.length < 5) {
+      showSnackBar("Please provide valid full name");
+      return false;
+    } else if (_phone.length != 10) {
+      showSnackBar("Please provide valid phone number");
+      return false;
+    } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_email)) {
+      showSnackBar("please provide valid email address");
+      return false;
+    } else if (_password.length < 6) {
+      showSnackBar("password length should be more than 6 characters");
+      return false;
+    } else {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => ProgressDialog(status: "Registering user...."),
+      );
+    }
+    return true;
+  }
+
+  void registerUser() async {
+    final bool isFormValid = await validateRegistration();
+    if(!isFormValid) return;
+
+    try {
+      /*
+
+    Map<String, dynamic> response = await RequestHelper.postRequest(
+        url: serviceUrl.registerUser,
+        body: {
+          'name' : _name,
+          'email' : _email,
+          'phone' : _phone,
+          'password' : _password,
+        },
+      );
+
+      String authToken = response['body']['token'];
+      bool cached = await HelperMethods.cacheAuthToken(authToken);
+
+      if(cached) {
+        Provider.of<AppData>(context, listen: false).setAuthToken(authToken);
+      }
+
+      logger.i('User Registration Successful');
+
+      Navigator.pushNamed(context, VehicleInfoScreen.id);
+
+     */
+    } catch (e) {
+      Navigator.pop(context);
+      showSnackBar(e.toString());
+    }
   }
 }
