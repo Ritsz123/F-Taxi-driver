@@ -78,26 +78,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       children: [
         InputField(
           labelText: 'Full name',
-          onValueChange: (e) {},
+          onValueChange: (String value) {
+            _name = value;
+          },
         ),
         5.heightBox,
         InputField(
           labelText: 'Email Address',
           keyboardType: TextInputType.emailAddress,
-          onValueChange: (e) {},
+          onValueChange: (String value) {
+            _email = value;
+          },
         ),
         5.heightBox,
         InputField(
           labelText: 'Phone number',
           keyboardType: TextInputType.number,
-          onValueChange: (v){},
+          onValueChange: (String value){
+            _phone = value;
+          },
         ),
         5.heightBox,
         InputField(
           labelText: 'Password',
           obscureText: true,
           onValueChange: (String value) {
-            // _password = value;
+            _password = value;
           },
         ),
       ],
@@ -115,13 +121,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_name.length < 5) {
       showSnackBar("Please provide valid full name");
       return false;
-    } else if (_phone.length != 10) {
-      showSnackBar("Please provide valid phone number");
-      return false;
     } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_email)) {
       showSnackBar("please provide valid email address");
       return false;
-    } else if (_password.length < 6) {
+    } else if (_phone.length != 10) {
+      showSnackBar("Please provide valid phone number");
+      return false;
+    }  else if (_password.length < 6) {
       showSnackBar("password length should be more than 6 characters");
       return false;
     } else {
@@ -160,7 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       logger.i('User Registration Successful');
 
-      Navigator.pushNamed(context, VehicleInfoScreen.id);
+      Navigator.pushNamedAndRemoveUntil(context, VehicleInfoScreen.id);
 
      */
     } catch (e) {
