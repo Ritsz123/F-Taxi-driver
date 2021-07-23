@@ -1,10 +1,10 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:uber_driver_app/Colors.dart';
-import 'package:uber_driver_app/screens/homeScreen.dart';
+import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/screens/registrationScreen.dart';
+import 'package:uber_driver_app/widgets/input_field.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -17,13 +17,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  var emailController = TextEditingController();
-
-  var passwordController = TextEditingController();
-
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _email = '';
+  String _password = '';
 
   void showSnackBar(String title) {
     final snackBar = SnackBar(
@@ -31,56 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
       content: title.text.size(15).make(),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void validateLogin() async {
-    var connResult = await Connectivity().checkConnectivity();
-    if (connResult != ConnectivityResult.mobile &&
-        connResult != ConnectivityResult.wifi) {
-      showSnackBar("No Internet connectivity");
-      return;
-    }
-    if (!emailController.text.contains('@')) {
-      showSnackBar("Please enter valid email address");
-    } else if (passwordController.text.length < 6) {
-      showSnackBar("please enter valid password");
-    } else {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => ProgressDialog(status: "Logging you in..."),
-      );
-      loginUser();
-    }
-  }
-
-  void loginUser() async {
-    User? user;
-    try {
-      user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      ))
-          .user;
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      showSnackBar(e.message!);
-    }
-    if (user != null) {
-//      verify user data in db
-      DatabaseReference userRef =
-          FirebaseDatabase.instance.reference().child('drivers/${user.uid}');
-      userRef.once().then(
-        (DataSnapshot snapshot) {
-          print("Driver Logged in");
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            HomeScreen.id,
-            (route) => false,
-          );
-        },
-      );
-    }
   }
 
   @override
@@ -99,69 +45,109 @@ class _LoginScreenState extends State<LoginScreen> {
                 image: AssetImage("assets/images/logo.png"),
               ),
               20.heightBox,
-              "Sign in as a Driver"
-                  .text
-                  .size(25)
-                  .fontFamily('Brand-Bold')
-                  .make(),
+              "Sign in as a Driver".text.size(25).fontFamily('Brand-Bold').make(),
               20.heightBox,
               Column(
                 children: [
-                  TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email Address',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  10.heightBox,
-                  TextField(
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
-                    ),
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
+                  _loginForm(),
                   40.heightBox,
                   TaxiButton(
-                    onPressed: validateLogin,
+                    onPressed: processLogin,
                     buttonText: "login",
                     color: MyColors.colorAccentPurple,
                   ),
                 ],
-              ).p20(),
+              ).p24(),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, RegistrationScreen.id, (route) => false);
+                  Navigator.pushNamedAndRemoveUntil(context, RegistrationScreen.id, (route) => false);
                 },
                 child:
-                    "Don't have a account, sign up here".text.size(15).make(),
+                  "Don't have a account, sign up here".text.size(15).make(),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _loginForm() {
+    return Column(
+      children: [
+        InputField(
+          labelText: 'Email Address',
+          onValueChange: (String value) {
+            _email = value;
+          },
+          keyboardType: TextInputType.emailAddress,
+        ),
+        10.heightBox,
+        InputField(
+          labelText: 'Password',
+          obscureText: true,
+          onValueChange: (String value) {
+            _password = value;
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<bool> _validateLoginForm() async {
+    var connResult = await Connectivity().checkConnectivity();
+    if (connResult != ConnectivityResult.mobile &&
+        connResult != ConnectivityResult.wifi) {
+      showSnackBar("No Internet connectivity");
+      return false;
+    }
+
+    if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_email)){
+      showSnackBar('Invalid email');
+      return false;
+    }else if (_password.length < 6) {
+      showSnackBar("please enter valid password");
+      return false;
+    }
+    return true;
+  }
+
+  void processLogin() async {
+    bool isFormValid = await _validateLoginForm();
+    if(!isFormValid) return;
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => ProgressDialog(status: "Logging you in..."),
+    );
+
+    logger.i('making login request');
+    /*
+
+    try {
+      Map<String, dynamic> response = await RequestHelper.postRequest(
+        url: serviceUrl.loginUser,
+        body: {
+          'email' : _email,
+          'password' : _password,
+        },
+      );
+
+      String authToken = response['body']['token'];
+      bool cached = await HelperMethods.cacheAuthToken(authToken);
+      if(cached) {
+        Provider.of<AppData>(context, listen: false).setAuthToken(authToken);
+
+        logger.i('Login Successful');
+
+        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      showSnackBar(e.toString());
+    }
+
+    */
   }
 }

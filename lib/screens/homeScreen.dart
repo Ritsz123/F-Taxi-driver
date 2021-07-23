@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar (
         onTap: onItemClicked,
         currentIndex: _selectedIndex,
         unselectedItemColor: MyColors.colorIcon,
@@ -60,12 +60,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.credit_card), label: "Earnings"),
-          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Ratings"),
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded), label: "Profile")
+            icon: Icon(Icons.credit_card),
+            label: "Earnings",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star),
+            label: "Ratings",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: "Profile",
+          ),
         ],
       ),
     );
