@@ -132,7 +132,7 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
         },
       );
 
-      UserModel model = UserModel.fromJson(response);
+      UserModel model = UserModel.fromJson(response['body']);
       Provider.of<AppData>(context, listen: false).setCurrentUser(model);
 
       Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);

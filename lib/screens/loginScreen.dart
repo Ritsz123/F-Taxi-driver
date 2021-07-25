@@ -1,12 +1,18 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uber_driver_app/Colors.dart';
+import 'package:uber_driver_app/dataProvider/AppData.dart';
 import 'package:uber_driver_app/globals.dart';
+import 'package:uber_driver_app/helper/HelperMethods.dart';
+import 'package:uber_driver_app/helper/request_helper.dart';
+import 'package:uber_driver_app/screens/homeScreen.dart';
 import 'package:uber_driver_app/screens/registrationScreen.dart';
 import 'package:uber_driver_app/widgets/input_field.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:uber_driver_app/serviceUrls.dart' as serviceUrl;
 
 class LoginScreen extends StatefulWidget {
   static const String id = "loginScreen";
@@ -122,11 +128,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     logger.i('making login request');
-    /*
 
     try {
       Map<String, dynamic> response = await RequestHelper.postRequest(
-        url: serviceUrl.loginUser,
+        url: serviceUrl.loginDriver,
         body: {
           'email' : _email,
           'password' : _password,
@@ -146,7 +151,5 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pop(context);
       showSnackBar(e.toString());
     }
-
-    */
   }
 }

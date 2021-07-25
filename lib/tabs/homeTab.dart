@@ -32,6 +32,12 @@ class _HomeTabState extends State<HomeTab> {
   String goOnlineDesc = "Are you sure you want to go Online and start receiving trip requests ?";
   String goOfflineDesc = "Are you sure you want to go Offline and stop receiving all trip requests ?";
 
+  @override
+  void initState() {
+    super.initState();
+    getCurrentDriverInfo();
+  }
+
   void getCurrentDriverInfo() {
     currentFirebaseUser = FirebaseAuth.instance.currentUser;
     PushNotificationService notificationService = PushNotificationService();
@@ -40,9 +46,75 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    getCurrentDriverInfo();
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        GoogleMap(
+          padding: EdgeInsets.only(top: 135),
+          myLocationEnabled: true,
+          myLocationButtonEnabled: true,
+          mapType: MapType.terrain,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+            _mapController = controller;
+            getCurrentLocation();
+          },
+          initialCameraPosition: googlePlex,
+        ),
+        Container(
+          height: 135,
+          width: double.infinity,
+          color: MyColors.colorPrimary,
+        ),
+        Positioned(
+          top: 60,
+          right: context.screenWidth / 4,
+          left: context.screenWidth / 4,
+          child: TaxiButton(
+            textSize: 20,
+            buttonText: availabilityText,
+            color: availabilityColor,
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => _changeAvailabilityConfirmDialog(),
+                isDismissible: false,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _changeAvailabilityConfirmDialog() {
+    return ConfirmSheet(
+      isOnline: isOnline,
+      title: isOnline ? "Go offline" : "go online",
+      subTitle: isOnline ? goOfflineDesc : goOnlineDesc,
+      onPressed: () {
+        if (isOnline) {
+          //go offline
+          goOffline();
+          setState(() {
+            isOnline = false;
+            availabilityColor = MyColors.colorLightGreen;
+            availabilityText = "GO online";
+          });
+        } else {
+          //go online
+          goOnline();
+          getLocationUpdates();
+          setState(() {
+            isOnline = true;
+            availabilityColor = MyColors.colorRed;
+            availabilityText = "GO offline";
+          });
+        }
+        //remove confirmation sheet
+        Navigator.pop(context);
+      },
+    );
   }
 
   void getCurrentLocation() async {
@@ -116,73 +188,5 @@ class _HomeTabState extends State<HomeTab> {
       LatLng pos = new LatLng(currentPosition!.latitude, currentPosition!.longitude);
       _mapController.animateCamera(CameraUpdate.newLatLng(pos));
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        GoogleMap(
-          padding: EdgeInsets.only(top: 135),
-          myLocationEnabled: true,
-          myLocationButtonEnabled: true,
-          mapType: MapType.terrain,
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
-            _mapController = controller;
-            getCurrentLocation();
-          },
-          initialCameraPosition: googlePlex,
-        ),
-        Container(
-          height: 135,
-          width: double.infinity,
-          color: MyColors.colorPrimary,
-        ),
-        Positioned(
-          top: 60,
-          right: context.screenWidth / 4,
-          left: context.screenWidth / 4,
-          child: TaxiButton(
-            textSize: 20,
-            buttonText: availabilityText,
-            color: availabilityColor,
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => ConfirmSheet(
-                  isOnline: isOnline,
-                  title: isOnline ? "Go offline" : "go online",
-                  subTitle: isOnline ? goOfflineDesc : goOnlineDesc,
-                  onPressed: () {
-                    if (isOnline) {
-                      //go offline
-                      goOffline();
-                      setState(() {
-                        isOnline = false;
-                        availabilityColor = MyColors.colorLightGreen;
-                        availabilityText = "GO online";
-                      });
-                    } else {
-                      //go online
-                      goOnline();
-                      getLocationUpdates();
-                      setState(() {
-                        isOnline = true;
-                        availabilityColor = MyColors.colorRed;
-                        availabilityText = "GO offline";
-                      });
-                    }
-                    //remove confirmation sheet
-                    Navigator.pop(context);
-                  },
-                ),
-                isDismissible: false,
-              );
-            },
-          ),
-        ),
-      ],
-    );
   }
 }
