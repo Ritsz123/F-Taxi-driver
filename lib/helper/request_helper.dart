@@ -53,11 +53,37 @@ class RequestHelper {
         Map<String, dynamic> decodedData = jsonDecode(data);
         return decodedData;
       }else{
-        throw Exception(response.statusCode);
+        throw Exception('request failed ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       logger.e(e);
       throw Exception(e);
     }
   }
+
+  static Future<Map<String, dynamic>> putRequest({required String url, required Map<String, dynamic> body, required String token}) async {
+    try {
+      http.Response response = await http.put(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'Bearer $token'
+        },
+        body: jsonEncode(body),
+      );
+
+      // print(response.statusCode);
+      if(_successResponseCodes.contains(response.statusCode)) {
+        String data = response.body;
+        Map<String, dynamic> decodedData = jsonDecode(data);
+        return decodedData;
+      }else{
+        throw Exception('request failed ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      logger.e(e);
+      throw Exception(e);
+    }
+  }
+
 }

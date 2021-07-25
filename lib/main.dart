@@ -2,6 +2,8 @@ import 'dart:io' show Platform;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uber_driver_app/dataProvider/AppData.dart';
 import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/screens/homeScreen.dart';
 import 'package:uber_driver_app/screens/loginScreen.dart';
@@ -43,20 +45,23 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        fontFamily: 'Brand-Regular',
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return ChangeNotifierProvider(
+      create: (context) => AppData(),
+      child: MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'Brand-Regular',
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        initialRoute:
+            currentFirebaseUser == null ? LoginScreen.id : HomeScreen.id,
+        routes: {
+          HomeScreen.id: (context) => HomeScreen(),
+          LoginScreen.id: (context) => LoginScreen(),
+          RegistrationScreen.id: (context) => RegistrationScreen(),
+          VehicleInfoScreen.id: (context) => VehicleInfoScreen(),
+        },
       ),
-      initialRoute:
-          currentFirebaseUser == null ? LoginScreen.id : HomeScreen.id,
-      routes: {
-        HomeScreen.id: (context) => HomeScreen(),
-        LoginScreen.id: (context) => LoginScreen(),
-        RegistrationScreen.id: (context) => RegistrationScreen(),
-        VehicleInfoScreen.id: (context) => VehicleInfoScreen(),
-      },
     );
   }
 }
