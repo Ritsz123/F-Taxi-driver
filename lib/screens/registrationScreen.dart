@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uber_driver_app/Colors.dart';
+import 'package:uber_driver_app/dataProvider/AppData.dart';
+import 'package:uber_driver_app/globals.dart';
+import 'package:uber_driver_app/helper/HelperMethods.dart';
+import 'package:uber_driver_app/helper/request_helper.dart';
 import 'package:uber_driver_app/screens/loginScreen.dart';
+import 'package:uber_driver_app/screens/vehicleInfoScreen.dart';
 import 'package:uber_driver_app/widgets/input_field.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:uber_driver_app/serviceUrls.dart' as serviceUrl;
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = "registrationScreen";
@@ -145,15 +152,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if(!isFormValid) return;
 
     try {
-      /*
-
-    Map<String, dynamic> response = await RequestHelper.postRequest(
-        url: serviceUrl.registerUser,
+      String url = serviceUrl.registerDriver;
+      Map<String, dynamic> response = await RequestHelper.postRequest(
+        url: url,
         body: {
-          'name' : _name,
-          'email' : _email,
-          'phone' : _phone,
-          'password' : _password,
+          'name': _name,
+          'phone': _phone,
+          'email': _email,
+          'password': _password,
         },
       );
 
@@ -166,9 +172,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       logger.i('User Registration Successful');
 
-      Navigator.pushNamedAndRemoveUntil(context, VehicleInfoScreen.id);
+      Navigator.pushNamedAndRemoveUntil(context, VehicleInfoScreen.id, (route) => false);
 
-     */
     } catch (e) {
       Navigator.pop(context);
       showSnackBar(e.toString());
