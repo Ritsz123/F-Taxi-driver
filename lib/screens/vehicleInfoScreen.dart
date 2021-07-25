@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uber_driver_app/dataProvider/AppData.dart';
 import 'package:uber_driver_app/helper/request_helper.dart';
+import 'package:uber_driver_app/models/userModel.dart';
 import 'package:uber_driver_app/screens/homeScreen.dart';
 import 'package:uber_driver_app/widgets/input_field.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
@@ -105,8 +106,7 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
       return false;
     }
     if (_carRegNumber.length < 3) {
-      showSnackBar(context,
-          'please provide valid car registration number');
+      showSnackBar(context, 'please provide valid car registration number');
       return false;
     }
     return true;
@@ -119,20 +119,26 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
 
     ProgressDialog(status: 'please wait..');
 
-    String token = Provider.of<AppData>(context, listen: false).getAuthToken();
-    String url = serviceUrl.updateVehicle;
-    Map<String, dynamic> response = await RequestHelper.putRequest(
-      url: url,
-      token: token,
-      body: {
-        'reg_number': _carRegNumber,
-        'model': _carModel,
-        'color': _carColor
-      },
-    );
+    try {
+      String token = Provider.of<AppData>(context, listen: false).getAuthToken();
+      String url = serviceUrl.updateVehicle;
+      Map<String, dynamic> response = await RequestHelper.putRequest(
+        url: url,
+        token: token,
+        body: {
+          'reg_number': _carRegNumber,
+          'model': _carModel,
+          'color': _carColor
+        },
+      );
 
-    if(response['message'] == 'success'){
+      UserModel model = UserModel.fromJson(response);
+      Provider.of<AppData>(context, listen: false).setCurrentUser(model);
+
       Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
+
+    } catch (e) {
+      showSnackBar(context, e.toString());
     }
   }
 }

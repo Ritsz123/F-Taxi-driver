@@ -1,15 +1,19 @@
 
+import 'package:uber_driver_app/models/vehicleModel.dart';
+
 class UserModel {
-  String id;
-  String fullName;
-  String phone;
-  String email;
+  final String id;
+  final String fullName;
+  final String phone;
+  final String email;
+  final VehicleModel vehicleModel;
 
   UserModel({
     required this.id,
     required this.email,
     required this.phone,
-    required this.fullName
+    required this.fullName,
+    required this.vehicleModel,
   });
 
   static UserModel fromJson(Map<String, dynamic> json){
@@ -18,6 +22,7 @@ class UserModel {
       email: json['email'].toString(),
       phone: json['phone'].toString(),
       fullName: json['name'].toString(),
+      vehicleModel: VehicleModel.fromJson(json['vehicle_details'])
     );
   }
 
