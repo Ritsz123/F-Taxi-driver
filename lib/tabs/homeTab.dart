@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
@@ -63,7 +62,7 @@ class _HomeTabState extends State<HomeTab> {
       PushNotificationService notificationService = PushNotificationService();
       notificationService.initialize();
       notificationService.getToken();
-    } catch(e){
+    } catch(e) {
       logger.e(e);
     }
   }

@@ -30,4 +30,9 @@ class Address {
       'placeId': placeID
     };
   }
+
+  @override
+  String toString() {
+    return 'Address{placeName: $placeName, latitude: $latitude, longitude: $longitude, formattedPlaceAddress: $formattedPlaceAddress, placeID: $placeID}';
+  }
 }
