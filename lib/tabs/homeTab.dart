@@ -60,7 +60,7 @@ class _HomeTabState extends State<HomeTab> {
       logger.i('get current user info success');
 
       PushNotificationService notificationService = PushNotificationService();
-      notificationService.initialize();
+      notificationService.initialize(context);
       notificationService.getToken();
     } catch(e) {
       logger.e(e);
