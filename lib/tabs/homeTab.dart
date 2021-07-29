@@ -36,8 +36,7 @@ class _HomeTabState extends State<HomeTab> {
   String goOnlineDesc = "Are you sure you want to go Online and start receiving trip requests ?";
   String goOfflineDesc = "Are you sure you want to go Offline and stop receiving all trip requests ?";
   late UserModel currentUser;
-  String? token;
-
+  late String token;
 
   @override
   void initState() {
@@ -57,11 +56,13 @@ class _HomeTabState extends State<HomeTab> {
 
       UserModel model = UserModel.fromJson(response['body']);
       Provider.of<AppData>(context, listen: false).setCurrentUser(model);
+
       logger.i('get current user info success');
 
       PushNotificationService notificationService = PushNotificationService(
         authToken: Provider.of<AppData>(context, listen: false).getAuthToken(),
       );
+
       notificationService.initialize(context);
       notificationService.getToken();
     } catch(e) {
@@ -177,14 +178,20 @@ class _HomeTabState extends State<HomeTab> {
 
   void goOnline() {
     currentUser = Provider.of<AppData>(context, listen: false).getCurrentUser();
+    try{
+      final String url = serviceUrl.updateDriverAvailability;
 
-    Geofire.initialize(availableDriversPathInDB);
-    Geofire.setLocation(
-      currentUser.id,
-      currentPosition.latitude,
-      currentPosition.longitude,
-    );
+      RequestHelper.putRequest(url: url, body: {'available': true}, token: token);
 
+      Geofire.initialize(availableDriversPathInDB);
+      Geofire.setLocation(
+        currentUser.id,
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+    } catch (e) {
+      logger.e(e);
+    }
     // tripRequestRef = FirebaseDatabase.instance.reference().child('drivers/${currentFirebaseUser!.uid}/newtrip');
     // tripRequestRef!.set('waiting');
     // tripRequestRef!.onValue.listen((event) {
@@ -211,7 +218,15 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void goOffline() {
-    Geofire.removeLocation(currentUser.id);
+    try{
+      final String url = serviceUrl.updateDriverAvailability;
+
+      RequestHelper.putRequest(url: url, body: {'available': false}, token: token);
+
+      Geofire.removeLocation(currentUser.id);
+    }catch(e){
+      logger.e(e);
+    }
     // tripRequestRef!.onDisconnect();
     // tripRequestRef!.remove();
     // tripRequestRef = null;
