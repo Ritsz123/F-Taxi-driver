@@ -6,5 +6,5 @@ const String registerDriver = '$domain/auth/driver/register';
 const String loginDriver = '$domain/auth/driver/login';
 const String getUserData = '$domain/auth/getUserProfile';
 
-
 const String updateVehicle = '$domain/update/driver/vehicle';
+const String updateFcmToken = '$domain/update/driver/fcmtoken';

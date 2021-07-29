@@ -13,9 +13,11 @@ import 'package:uber_driver_app/widgets/tripRequestDialog.dart';
 import '../globals.dart';
 import 'package:uber_driver_app/serviceUrls.dart' as serviceUrl;
 
-
 class PushNotificationService {
   final FirebaseMessaging fcm = FirebaseMessaging.instance;
+  final String authToken;
+
+  PushNotificationService({required this.authToken});
 
   Future<void> initialize(BuildContext context) async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -39,16 +41,26 @@ class PushNotificationService {
   }
 
   Future<String?> getToken() async {
-    String? fcmToken = await fcm.getToken();
-    logger.i('FCM token : $fcmToken');
-    //TODO create api to update token in db
-    // DatabaseReference tokenRef =
-    //     FirebaseDatabase.instance.reference().child('drivers/${currentFirebaseUser!.uid}/token');
-    // tokenRef.set(token);
+    try{
+      String? fcmToken = await fcm.getToken();
+      logger.i('FCM token : $fcmToken');
 
-    fcm.subscribeToTopic('allDrivers');
-    fcm.subscribeToTopic('allUsers');
-    return fcmToken;
+      final String url = serviceUrl.updateFcmToken;
+
+      RequestHelper.putRequest(
+        url: url,
+        body: {
+          'fcmToken': fcmToken
+        },
+        token: authToken,
+      );
+
+      fcm.subscribeToTopic('allDrivers');
+      fcm.subscribeToTopic('allUsers');
+      return fcmToken;
+    } catch(e){
+      logger.e(e);
+    }
   }
 
   Address _addressFromMap(Map<String, dynamic> map) {
@@ -60,13 +72,12 @@ class PushNotificationService {
   }
 
   Future<UserModel?> _fetchRiderInfo(String riderID, BuildContext context) async {
-    String token = Provider.of<AppData>(context, listen: false).getAuthToken();
     String url = serviceUrl.getUserData + '/$riderID';
     try {
       Map<String, dynamic> response = await RequestHelper.getRequest(
         url: url,
         withAuthToken: true,
-        token: token,
+        token: authToken,
       );
 
       UserModel model = UserModel.fromJson(response['body']);
@@ -106,6 +117,7 @@ class PushNotificationService {
           );
 
           logger.i('information retrived $tripModel');
+
           showDialog(
             context: context,
             barrierDismissible: false,

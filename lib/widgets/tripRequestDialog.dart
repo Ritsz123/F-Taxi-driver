@@ -71,7 +71,9 @@ class TripRequestDialog extends StatelessWidget {
               children: [
                 Expanded(
                   child: TaxiButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
                     color: Colors.red,
                     buttonText: 'decline',
                   ),

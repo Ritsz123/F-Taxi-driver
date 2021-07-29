@@ -59,7 +59,9 @@ class _HomeTabState extends State<HomeTab> {
       Provider.of<AppData>(context, listen: false).setCurrentUser(model);
       logger.i('get current user info success');
 
-      PushNotificationService notificationService = PushNotificationService();
+      PushNotificationService notificationService = PushNotificationService(
+        authToken: Provider.of<AppData>(context, listen: false).getAuthToken(),
+      );
       notificationService.initialize(context);
       notificationService.getToken();
     } catch(e) {
