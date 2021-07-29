@@ -9,6 +9,7 @@ import 'package:uber_driver_app/models/AddressModel.dart';
 import 'package:uber_driver_app/models/TripModel.dart';
 import 'package:uber_driver_app/models/userModel.dart';
 import 'package:uber_driver_app/widgets/progressIndicator.dart';
+import 'package:uber_driver_app/widgets/tripRequestDialog.dart';
 import '../globals.dart';
 import 'package:uber_driver_app/serviceUrls.dart' as serviceUrl;
 
@@ -105,6 +106,11 @@ class PushNotificationService {
           );
 
           logger.i('information retrived $tripModel');
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => TripRequestDialog(tripModel: tripModel),
+          );
         } else{
           logger.e('Rider is null');
           throw Exception('Rider is null');

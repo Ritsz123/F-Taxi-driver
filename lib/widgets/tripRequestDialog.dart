@@ -50,7 +50,9 @@ class TripRequestDialog extends StatelessWidget {
                 Expanded(child: tripModel.pickupAddress.placeName.text.xl.make()),
               ],
             ),
-            10.heightBox,
+            5.heightBox,
+            "to".text.bold.xl.makeCentered(),
+            5.heightBox,
             Row(
               children: [
                 Image.asset(
