@@ -1,4 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uber_driver_app/dataProvider/AppData.dart';
+import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/models/TripModel.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -81,7 +85,15 @@ class TripRequestDialog extends StatelessWidget {
                 20.widthBox,
                 Expanded(
                   child: TaxiButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      if(await isTripAvailable(context, tripModel.id)) {
+                        logger.i('trip accepted by driver');
+                          // TODO : make api request to update ride in db
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('trip not available')));
+                        logger.e('Trip not available');
+                      }
+                    },
                     buttonText: 'Accept',
                   ),
                 ),
@@ -92,5 +104,19 @@ class TripRequestDialog extends StatelessWidget {
         ).pSymmetric(h: 16),
       ),
     );
+  }
+
+  Future<bool> isTripAvailable(BuildContext context, String tripId) async {
+    try {
+      DatabaseReference tripRef = FirebaseDatabase.instance.reference().child('rideRequest');
+      DataSnapshot snapshot = await tripRef.child(tripId).once();
+      if(snapshot.value != null){
+        return true;
+      }
+      return false;
+    } catch(e) {
+        logger.e(e);
+        throw e;
+    }
   }
 }

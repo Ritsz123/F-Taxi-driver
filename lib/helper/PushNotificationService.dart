@@ -20,7 +20,10 @@ class PushNotificationService {
   PushNotificationService({required this.authToken});
 
   Future<void> initialize(BuildContext context) async {
+    logger.e('initializing FCM');
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      logger.i('got a fcm message');
       Map<String, dynamic> messageData = message.data;
 
       fetchRideInfo(messageData['rideId'], context);
@@ -28,6 +31,8 @@ class PushNotificationService {
     });
 
     FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
+      logger.i('got a fcm background message');
+
       Map<String, dynamic> messageData = message.data;
 
       fetchRideInfo(messageData['rideId'], context);
@@ -109,6 +114,7 @@ class PushNotificationService {
 
         if(rider != null){
           TripModel tripModel = TripModel(
+            id: tripId,
             rider: rider,
             driver: Provider.of<AppData>(context, listen: false).getCurrentUser(),
             pickupAddress: pickupAddress,

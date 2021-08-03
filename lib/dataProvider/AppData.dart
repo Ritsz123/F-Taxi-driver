@@ -8,7 +8,6 @@ class AppData extends ChangeNotifier{
   late String _authToken;
   late UserModel _currentUser;
 
-
   void updateDestinationAddress(Address newAddress) {
     _destinationAddress = newAddress;
     notifyListeners();

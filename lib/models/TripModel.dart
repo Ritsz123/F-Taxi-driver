@@ -7,6 +7,7 @@ class TripModel {
   final Address pickupAddress;
   final Address destAddress;
   final String paymentMethod;
+  final String id;
 
   TripModel({
     required this.rider,
@@ -14,6 +15,7 @@ class TripModel {
     required this.pickupAddress,
     required this.destAddress,
     required this.paymentMethod,
+    required this.id,
   });
 
   @override
