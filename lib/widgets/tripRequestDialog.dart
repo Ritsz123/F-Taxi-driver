@@ -5,6 +5,7 @@ import 'package:uber_driver_app/dataProvider/AppData.dart';
 import 'package:uber_driver_app/globals.dart';
 import 'package:uber_driver_app/helper/request_helper.dart';
 import 'package:uber_driver_app/models/TripModel.dart';
+import 'package:uber_driver_app/widgets/progressIndicator.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:uber_driver_app/serviceUrls.dart' as serviceUrls;
@@ -102,6 +103,14 @@ class TripRequestDialog extends StatelessWidget {
 
   void onAcceptTrip (BuildContext context) async {
     if (await isTripAvailable(context, tripModel.id)) {
+      Navigator.of(context).pop();
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => ProgressDialog(status: 'Loading..'),
+      );
+
       try {
         final String url = serviceUrls.acceptNewTrip;
 
@@ -113,7 +122,30 @@ class TripRequestDialog extends StatelessWidget {
 
         if (response['message'] == 'success') {
           logger.i('trip accepted by driver');
-          Navigator.of(context).pop(); //dialog
+          Navigator.of(context).pop(); //loading dialog
+          
+          showModalBottomSheet(
+            context: context, 
+            isDismissible: false,
+            builder: (context) => Container(
+              height: 200,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.close),
+                    ),
+                    "Trip Accepted by ${tripModel.driver.fullName}".text.xl.makeCentered(),
+                    "Rider name : ${tripModel.rider.fullName}".text.xl.makeCentered(),
+                    "Phone : ${tripModel.rider.phone}".text.xl.makeCentered(),
+                  ],
+                ),
+              ),
+            ),
+          );
         } else {
           throw Exception('Exception occurred while accepting trip');
         }
