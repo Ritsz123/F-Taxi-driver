@@ -18,6 +18,16 @@ class TripModel {
     required this.id,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'riderId': rider.id,
+      'driverId': driver.id,
+      'source_address': pickupAddress.toJson(),
+      'destination_address': destAddress.toJson(),
+    };
+  }
+
+
   @override
   String toString() {
     return 'TripModel{rider: $rider, driver: $driver, pickupAddress: $pickupAddress, destAddress: $destAddress, paymentMethod: $paymentMethod}';

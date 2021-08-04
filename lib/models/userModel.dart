@@ -24,7 +24,7 @@ class UserModel {
       email: json['email'].toString(),
       phone: json['phone'].toString(),
       fullName: json['name'].toString(),
-      isAvailable: json['available'] == null ? false : json['available'] as bool,
+      isAvailable: json['available'] == null ? true : json['available'] as bool,
       vehicleModel: json['vehicle_details'] == null ? null : VehicleModel.fromJson(json['vehicle_details'])
     );
   }

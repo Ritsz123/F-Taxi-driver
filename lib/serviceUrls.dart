@@ -9,3 +9,5 @@ const String getUserData = '$domain/auth/getUserProfile';
 const String updateVehicle = '$domain/update/driver/vehicle';
 const String updateFcmToken = '$domain/update/driver/fcmtoken';
 const String updateDriverAvailability = '$domain/update/driver/status';
+
+const String acceptNewTrip = '$domain/trips/addTrip';

@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uber_driver_app/dataProvider/AppData.dart';
 import 'package:uber_driver_app/globals.dart';
+import 'package:uber_driver_app/helper/request_helper.dart';
 import 'package:uber_driver_app/models/TripModel.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:uber_driver_app/serviceUrls.dart' as serviceUrls;
 
 class TripRequestDialog extends StatelessWidget {
   final TripModel tripModel;
@@ -85,15 +87,7 @@ class TripRequestDialog extends StatelessWidget {
                 20.widthBox,
                 Expanded(
                   child: TaxiButton(
-                    onPressed: () async {
-                      if(await isTripAvailable(context, tripModel.id)) {
-                        logger.i('trip accepted by driver');
-                          // TODO : make api request to update ride in db
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('trip not available')));
-                        logger.e('Trip not available');
-                      }
-                    },
+                    onPressed:() => onAcceptTrip(context),
                     buttonText: 'Accept',
                   ),
                 ),
@@ -104,6 +98,32 @@ class TripRequestDialog extends StatelessWidget {
         ).pSymmetric(h: 16),
       ),
     );
+  }
+
+  void onAcceptTrip (BuildContext context) async {
+    if (await isTripAvailable(context, tripModel.id)) {
+      try {
+        final String url = serviceUrls.acceptNewTrip;
+
+        Map<String, dynamic> response = await RequestHelper.putRequest(
+          url: url,
+          body: tripModel.toJson(),
+          token: Provider.of<AppData>(context, listen: false).getAuthToken(),
+        );
+
+        if (response['message'] == 'success') {
+          logger.i('trip accepted by driver');
+          Navigator.of(context).pop(); //dialog
+        } else {
+          throw Exception('Exception occurred while accepting trip');
+        }
+      } catch (e) {
+        logger.e(e);
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('trip not available')));
+      logger.e('Trip not available');
+    }
   }
 
   Future<bool> isTripAvailable(BuildContext context, String tripId) async {
