@@ -1,8 +1,8 @@
 # F - Taxi - Driver🚗
 
 This Module is the part of complete project **F - Taxi** 🚗
-This project is developed using Flutter 📱 and contains all Driver side functionalities such as:
-- Login / Register new Driver & vehicle details. 🚕
+<br>Developed using Flutter 📱 and contains all Driver side functionalities such as:
+- Login / Register new Driver & vehicle details.🔐
 - Toggle availability of the driver. 📴
 - Check for available ride requests. 🗺
 - Accept / Decline the ride request. ❌
