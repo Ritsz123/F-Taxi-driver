@@ -1,16 +1,9 @@
-# uber_driver_app
+# F - Taxi - Driver🚗
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This Module is the part of complete project **F - Taxi** 🚗
+This project is developed using Flutter 📱 and contains all Driver side functionalities such as:
+- Login / Register new Driver & vehicle details. 🚕
+- Toggle availability of the driver. 📴
+- Check for available ride requests. 🗺
+- Accept / Decline the ride request. ❌
+- Show the estimated time to reach the rider. (based on google map's API) 🗺
