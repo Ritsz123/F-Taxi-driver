@@ -1,16 +1,11 @@
-import 'dart:async';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 
-
 Logger logger = Logger();
 
-final CameraPosition googlePlex = CameraPosition(
+final CameraPosition india = CameraPosition(
   bearing: 0,
   target: LatLng(28.6139, 77.2090),
   tilt: 0,
   zoom: 3,
 );
-
-StreamSubscription<Position>? homeTabPositionStream;

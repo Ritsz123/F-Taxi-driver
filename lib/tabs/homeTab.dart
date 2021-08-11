@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
@@ -16,7 +15,6 @@ import 'package:uber_driver_app/widgets/confirmSheet.dart';
 import 'package:uber_driver_app/widgets/taxiButton.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:uber_driver_app/serviceUrls.dart' as serviceUrl;
-
 import '../globals.dart';
 
 class HomeTab extends StatefulWidget {
@@ -26,6 +24,7 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   late GoogleMapController _mapController;
+  StreamSubscription<Position>? homeTabPositionStream;
   Completer<GoogleMapController> _controller = Completer();
   late Position currentPosition;
   String availableDriversPathInDB = "driversAvailable";
@@ -84,7 +83,7 @@ class _HomeTabState extends State<HomeTab> {
             _mapController = controller;
             getCurrentLocation();
           },
-          initialCameraPosition: googlePlex,
+          initialCameraPosition: india,
         ),
         Container(
           height: 135,
@@ -192,11 +191,6 @@ class _HomeTabState extends State<HomeTab> {
     } catch (e) {
       logger.e(e);
     }
-    // tripRequestRef = FirebaseDatabase.instance.reference().child('drivers/${currentFirebaseUser!.uid}/newtrip');
-    // tripRequestRef!.set('waiting');
-    // tripRequestRef!.onValue.listen((event) {
-    //   print(event.snapshot.value);
-    // });
   }
 
   void getLocationUpdates() {
@@ -227,8 +221,5 @@ class _HomeTabState extends State<HomeTab> {
     }catch(e){
       logger.e(e);
     }
-    // tripRequestRef!.onDisconnect();
-    // tripRequestRef!.remove();
-    // tripRequestRef = null;
   }
 }
