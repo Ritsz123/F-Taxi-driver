@@ -24,7 +24,10 @@ class PushNotificationService {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       logger.i('got a fcm message');
+
       Map<String, dynamic> messageData = message.data;
+
+      logger.i(messageData);
 
       fetchRideInfo(messageData['rideId'], context);
 
