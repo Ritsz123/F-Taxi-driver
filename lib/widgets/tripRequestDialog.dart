@@ -120,10 +120,10 @@ class TripRequestDialog extends StatelessWidget {
           token: Provider.of<AppData>(context, listen: false).getAuthToken(),
         );
 
-        FirebaseDatabase.instance.reference().child('rideRequest').child(tripModel.id).remove();
-
         if (response['message'] == 'success') {
           logger.i('trip accepted by driver');
+          FirebaseDatabase.instance.reference().child('rideRequest').child(tripModel.id).remove();
+
           Navigator.of(context).pop(); //loading dialog
           
           showModalBottomSheet(
